@@ -1,7 +1,7 @@
 -- This program is open source, licensed under the PostgreSQL License.
 -- For license terms, see the LICENSE file.
 --
--- Copyright (C) 2015: Julien Rouhaud
+-- Copyright (C) 2015-2017: Julien Rouhaud
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION hypopg" to load this file. \quit
@@ -10,19 +10,19 @@ SET client_encoding = 'UTF8';
 
 CREATE FUNCTION hypopg_reset()
     RETURNS void
-    LANGUAGE c COST 100
+    LANGUAGE C VOLATILE COST 100
 AS '$libdir/hypopg', 'hypopg_reset';
 
 CREATE FUNCTION
 hypopg_create_index(IN sql_order text, OUT indexrelid oid, OUT indexname text)
     RETURNS SETOF record
-    LANGUAGE c COST 100
+    LANGUAGE C STRICT VOLATILE COST 100
 AS '$libdir/hypopg', 'hypopg_create_index';
 
 CREATE FUNCTION
 hypopg_drop_index(IN indexid oid)
     RETURNS bool
-    LANGUAGE c COST 100
+    LANGUAGE C STRICT VOLATILE COST 100
 AS '$libdir/hypopg', 'hypopg_drop_index';
 
 CREATE FUNCTION hypopg(OUT indexname text, OUT indexrelid oid,
@@ -50,5 +50,11 @@ LANGUAGE sql;
 CREATE FUNCTION
 hypopg_relation_size(IN indexid oid)
     RETURNS bigint
-LANGUAGE c COST 100
+LANGUAGE C STRICT VOLATILE COST 100
 AS '$libdir/hypopg', 'hypopg_relation_size';
+
+CREATE FUNCTION
+hypopg_get_indexdef(IN indexid oid)
+    RETURNS text
+LANGUAGE C STRICT VOLATILE COST 100
+AS '$libdir/hypopg', 'hypopg_get_indexdef';

@@ -17,15 +17,15 @@ Important
 - Add some more (or enhance) function. Following are interesting:
 - [X] estimated index size
 - [ ] estimated number of lines
-- [ ] add hypopg_get_indexdef(oid) (based on src/backend/utils/adt/ruleutils.c/pg_get_indexdef_worker())
+- [X] add hypopg_get_indexdef(oid)
 
 Less important
 --------------
 
 - [ ] specify tablespace
 - [ ] Compatibility PG 9.2-
-- [ ] handle unique index, still need to see if there is an impact somewhere...
+- [X] handle unique index
 - [X] handle reverse and nulls first
-- [ ] handle index on expression
+- [X] handle index on expression
 - [X] handle index on predicate
 - [ ] specify a bloat factor

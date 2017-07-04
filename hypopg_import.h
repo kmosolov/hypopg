@@ -5,6 +5,8 @@
  * This program is open source, licensed under the PostgreSQL license.
  * For license terms, see the LICENSE file.
  *
+ * Copyright (c) 2008-2017, PostgreSQL Global Development Group
+ *
  *-------------------------------------------------------------------------
  */
 
@@ -22,3 +24,7 @@ extern Oid GetIndexOpClass(List *opclass, Oid attrType,
 
 extern void CheckPredicate(Expr *predicate);
 extern bool CheckMutability(Expr *expr);
+#if PG_VERSION_NUM < 90500
+extern char *get_am_name(Oid amOid);
+#endif
+extern void get_opclass_name(Oid opclass, Oid actual_datatype, StringInfo buf);

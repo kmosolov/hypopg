@@ -1,10 +1,15 @@
 HypoPG
 =======
 
-This software is EXPERIMENTAL and therefore NOT production ready. Use at your
-own risk.
-
 HypoPG is a PostgreSQL extension adding support for hypothetical indexes.
+
+An hypothetical, or virtual, index is an index that doesn't really exists, and
+thus doesn't cost CPU, disk or any resource to create.  They're useful to know
+if specific indexes can increase performance for problematic queries, since
+you can know if PostgreSQL will use these indexes or not without having to
+spend resources to create them.  For more information on this extension usage,
+you can see [this blog
+post](https://rjuju.github.io/postgresql/2015/07/02/how-about-hypothetical-indexes.html).
 
 This project is sponsored by [Dalibo](http://dalibo.com).
 
@@ -81,5 +86,6 @@ Of course, only EXPLAIN without analyze will use hypothetical indexes:
     (5 rows)
 
 To remove your backend's hypothetical indexes, you can use the function
-**hypopg_drop_index(indexid)** with the OID that **hypopg()** function returns,
-call **hypopg_reset()** to remove all at once or just close your current connection.
+**hypopg_drop_index(indexrelid)** with the OID that **hypopg_list_indexes()**
+function returns, call **hypopg_reset()** to remove all at once or just close
+your current connection.

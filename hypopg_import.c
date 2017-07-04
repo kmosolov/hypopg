@@ -5,6 +5,8 @@
  * This program is open source, licensed under the PostgreSQL license.
  * For license terms, see the LICENSE file.
  *
+ * Copyright (c) 2008-2017, PostgreSQL Global Development Group
+ *
  *-------------------------------------------------------------------------
  */
 
@@ -18,18 +20,22 @@
 #include "catalog/namespace.h"
 #include "catalog/pg_opclass.h"
 #include "commands/defrem.h"
+#if PG_VERSION_NUM < 90500
+#include "lib/stringinfo.h"
+#endif
 #include "nodes/makefuncs.h"
 #include "optimizer/clauses.h"
 #include "optimizer/planner.h"
 #include "parser/parse_coerce.h"
 #include "utils/builtins.h"
+#include "utils/lsyscache.h"
 #include "utils/rel.h"
 #include "utils/syscache.h"
 
 #include "hypopg_import.h"
 
 
-/* Copied from backend/optimizer/util/plancat.c, not exported.
+/* Copied from src/backend/optimizer/util/plancat.c, not exported.
  *
  * Build a targetlist representing the columns of the specified index.
  * Each column is represented by a Var for the corresponding base-relation
@@ -262,4 +268,72 @@ CheckMutability(Expr *expr)
 
 	/* Now we can search for non-immutable functions */
 	return contain_mutable_functions((Node *) expr);
+}
+
+#if PG_VERSION_NUM < 90500
+/*
+ * Copied from src/backend/commands/amcmds.c
+ *
+ * get_am_name - given an access method OID name and type, look up its name.
+ */
+char *
+get_am_name(Oid amOid)
+{
+	HeapTuple	tup;
+	char	   *result = NULL;
+
+	tup = SearchSysCache1(AMOID, ObjectIdGetDatum(amOid));
+	if (HeapTupleIsValid(tup))
+	{
+		Form_pg_am	amform = (Form_pg_am) GETSTRUCT(tup);
+
+		result = pstrdup(NameStr(amform->amname));
+		ReleaseSysCache(tup);
+	}
+	return result;
+}
+#endif
+
+
+/*
+ * Copied from src/backend/utils/adt/ruleutils.c, not exported.
+ *
+ * get_opclass_name			- fetch name of an index operator class
+ *
+ * The opclass name is appended (after a space) to buf.
+ *
+ * Output is suppressed if the opclass is the default for the given
+ * actual_datatype.  (If you don't want this behavior, just pass
+ * InvalidOid for actual_datatype.)
+ */
+void
+get_opclass_name(Oid opclass, Oid actual_datatype,
+				 StringInfo buf)
+{
+	HeapTuple	ht_opc;
+	Form_pg_opclass opcrec;
+	char	   *opcname;
+	char	   *nspname;
+
+	ht_opc = SearchSysCache1(CLAOID, ObjectIdGetDatum(opclass));
+	if (!HeapTupleIsValid(ht_opc))
+		elog(ERROR, "cache lookup failed for opclass %u", opclass);
+	opcrec = (Form_pg_opclass) GETSTRUCT(ht_opc);
+
+	if (!OidIsValid(actual_datatype) ||
+		GetDefaultOpClass(actual_datatype, opcrec->opcmethod) != opclass)
+	{
+		/* Okay, we need the opclass name.  Do we need to qualify it? */
+		opcname = NameStr(opcrec->opcname);
+		if (OpclassIsVisible(opclass))
+			appendStringInfo(buf, " %s", quote_identifier(opcname));
+		else
+		{
+			nspname = get_namespace_name(opcrec->opcnamespace);
+			appendStringInfo(buf, " %s.%s",
+							 quote_identifier(nspname),
+							 quote_identifier(opcname));
+		}
+	}
+	ReleaseSysCache(ht_opc);
 }
