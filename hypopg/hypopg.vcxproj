@@ -90,6 +90,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalIncludeDirectories>C:\Program Files\PostgreSQL\9.6\include\server\port\win32_msvc;C:\Program Files\PostgreSQL\9.6\include\server\port\win32;C:\Program Files\PostgreSQL\9.6\include\server;C:\Program Files\PostgreSQL\9.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -125,6 +126,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalIncludeDirectories>C:\Program Files\PostgreSQL\9.6\include\server\port\win32_msvc;C:\Program Files\PostgreSQL\9.6\include\server\port\win32;C:\Program Files\PostgreSQL\9.6\include\server;C:\Program Files\PostgreSQL\9.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
