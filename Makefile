@@ -16,6 +16,7 @@ release-zip: all
 	unzip ./hypopg-$(EXTVERSION).zip
 	rm ./hypopg-$(EXTVERSION).zip
 	rm ./hypopg-$(EXTVERSION)/.gitignore
+	rm ./hypopg-$(EXTVERSION)/docs/ -rf
 	rm ./hypopg-$(EXTVERSION)/typedefs.list
 	rm ./hypopg-$(EXTVERSION)/TODO.md
 	sed -i -e "s/__VERSION__/$(EXTVERSION)/g"  ./hypopg-$(EXTVERSION)/META.json
@@ -26,3 +27,11 @@ release-zip: all
 DATA = $(wildcard *--*.sql)
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
+
+DEBUILD_ROOT = /tmp/$(EXTENSION)
+
+deb: release-zip
+	mkdir -p $(DEBUILD_ROOT) && rm -rf $(DEBUILD_ROOT)/*
+	unzip ./${EXTENSION}-$(EXTVERSION).zip -d $(DEBUILD_ROOT)
+	cd $(DEBUILD_ROOT)/${EXTENSION}-$(EXTVERSION) && make -f debian/rules orig
+	cd $(DEBUILD_ROOT)/${EXTENSION}-$(EXTVERSION) && debuild -us -uc -sa

@@ -1,11 +1,61 @@
 Changelog
 =========
 
+2018-05-30 version 1.1.2:
+-------------------------
+
+  **New features**
+
+    - Add support for INCLUDE on hypothetical indexes (pg11+)
+    - Add support for parallel hypothetical index scan (pg11+)
+
+  **Bug fixes:**
+
+    - Fix support for pg11, thanks to Christoph Berg for the report
+
+2018-03-20 version 1.1.1:
+-------------------------
+
+  **Bug fixes**:
+
+    - Fix potentially uninitialized variables, thanks to Jeremy Finzel for the
+      report.
+    - Support hypothetical indexes on materialized view, thanks to Andrew Kane
+      for the report.
+
+  **Miscellaneous**:
+
+    - add support for PostgreSQL 11
+
+2017-10-04 version 1.1.0:
+-------------------------
+
+  **New features**:
+
+    - add support for hypothetical indexes on expression
+    - add a hypopg_get_indexdef() function to get definition of a stored
+      hypothetical index
+
+  **Bug fixes**:
+
+    - don't allow hypothetical unique or multi-column index if the AM doesn't
+      support it
+    - disallow hypothetical indexes on system columns (except OID)
+    - fix indexes using DESC clause and default NULLS ordering, thanks to
+      Andrew Kane for the report and test case.
+    - fix PostgreSQL 9.6+ support, thanks to Rob Stolarz for the report
+
+  **Miscellaneous**:
+
+    - add support for PostgreSQL 10
+
 2016-10-24 version 1.0.0:
+-------------------------
 
   - fix memory leak in hypopg() function
 
 2016-07-07 version 0.0.5:
+-------------------------
 
   - add support for PostgreSQL 9.6, thanks to Konstantin Mosolov for fixing some
     issues
@@ -15,6 +65,7 @@ Changelog
   - fix possible crash in hypothetical index size estimation
 
 2015-11-06 version 0.0.4:
+-------------------------
 
   - remove the simplified "hypopg_add_index()" function
   - free memory when hypothetical index creation fails
@@ -27,6 +78,7 @@ Changelog
   - safer handling of locks.
 
 2015-08-08 version 0.0.3:
+-------------------------
 
   - fix a bug when a regular query could fail after a hypothetical index have
   been created, and tested with explain.
@@ -36,10 +88,12 @@ Changelog
   backend. Thanks to Ronan Dunklau for the patch.
 
 2015-07-08 version 0.0.2:
+-------------------------
 
   - fix crash when building hypothetical index on expression, thanks to Thom
   Brown for the report.
 
 2015-06-24 version 0.0.1:
+-------------------------
 
   - First version of HypoPG.
